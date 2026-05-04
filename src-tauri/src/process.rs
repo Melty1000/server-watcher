@@ -1,10 +1,4 @@
-use std::process::Command;
-
-#[cfg(windows)]
-use std::os::windows::process::CommandExt;
-
-#[cfg(windows)]
-const CREATE_NO_WINDOW: u32 = 0x08000000;
+use crate::command::hidden_command;
 
 struct KillProcessCommandSpec {
     program: &'static str,
@@ -13,11 +7,8 @@ struct KillProcessCommandSpec {
 
 pub fn kill_process(pid: u32) -> Result<(), Box<dyn std::error::Error>> {
     let spec = kill_process_command_spec(pid);
-    let mut command = Command::new(spec.program);
+    let mut command = hidden_command(spec.program);
     command.args(&spec.args);
-
-    #[cfg(windows)]
-    command.creation_flags(CREATE_NO_WINDOW);
 
     let status = command.status()?;
 

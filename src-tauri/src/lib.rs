@@ -1,3 +1,4 @@
+mod command;
 mod models;
 mod process;
 mod scanner;

@@ -1,6 +1,6 @@
+use crate::command::hidden_command;
 use crate::models::{Listener, ProcessSignal, ScanResult};
 use serde::Deserialize;
-use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Debug, Deserialize)]
@@ -36,15 +36,7 @@ struct RawScan {
 }
 
 pub fn scan_servers() -> Result<ScanResult, Box<dyn std::error::Error>> {
-    let output = Command::new("powershell.exe")
-        .args([
-            "-NoProfile",
-            "-ExecutionPolicy",
-            "Bypass",
-            "-Command",
-            &scanner_script(),
-        ])
-        .output()?;
+    let output = scanner_command(&scanner_script()).output()?;
 
     if !output.status.success() {
         return Err(String::from_utf8_lossy(&output.stderr).to_string().into());
@@ -86,6 +78,18 @@ pub fn scan_servers() -> Result<ScanResult, Box<dyn std::error::Error>> {
             })
             .collect(),
     })
+}
+
+fn scanner_command(script: &str) -> std::process::Command {
+    let mut command = hidden_command("powershell.exe");
+    command.args([
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        script,
+    ]);
+    command
 }
 
 fn now_ms() -> i64 {
@@ -144,4 +148,18 @@ $signals = Get-CimInstance Win32_Process |
 [PSCustomObject]@{ listeners = @($listeners); signals = @($signals) } | ConvertTo-Json -Depth 6 -Compress
 "#
     .to_string()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn scanner_script_collects_listeners_and_signals() {
+        let script = scanner_script();
+
+        assert!(script.contains("Get-NetTCPConnection -State Listen"));
+        assert!(script.contains("Get-CimInstance Win32_Process"));
+        assert!(script.contains("ConvertTo-Json -Depth 6 -Compress"));
+    }
 }
