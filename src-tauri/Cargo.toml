@@ -1,6 +1,6 @@
 [package]
 name = "server-watcher"
-version = "0.1.1"
+version = "0.1.2"
 description = "A Windows desktop utility for watching local development servers"
 authors = ["Melty1000"]
 edition = "2021"
