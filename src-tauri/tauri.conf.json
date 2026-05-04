@@ -32,6 +32,12 @@
     "active": true,
     "targets": ["nsis"],
     "publisher": "Melty1000",
+    "windows": {
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "uninstallerIcon": "icons/icon.ico"
+      }
+    },
     "icon": [
       "icons/icon.png",
       "icons/32x32.png",
