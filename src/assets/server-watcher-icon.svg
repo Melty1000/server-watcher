@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Server Watcher">
+  <defs>
+    <linearGradient id="darkStroke" x1="54" y1="36" x2="195" y2="213" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#46545d"/>
+      <stop offset="1" stop-color="#1d2830"/>
+    </linearGradient>
+    <linearGradient id="signalStroke" x1="58" y1="199" x2="205" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#36b737"/>
+      <stop offset="1" stop-color="#70ee4e"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke-linecap="butt" stroke-linejoin="round">
+    <path d="M44 128A84 84 0 1 1 181.99 192.35" stroke="url(#darkStroke)" stroke-width="15"/>
+    <path d="M181.99 192.35A84 84 0 0 1 44 128" stroke="url(#signalStroke)" stroke-width="15"/>
+  </g>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M79 96l34 32-34 32" stroke="url(#darkStroke)" stroke-width="15"/>
+    <path d="M130 162h45" stroke="url(#darkStroke)" stroke-width="15"/>
+  </g>
+  <g fill="#54dc45">
+    <circle cx="182" cy="119" r="7"/>
+    <circle cx="182" cy="142" r="7"/>
+  </g>
+</svg>

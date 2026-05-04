@@ -1,0 +1,40 @@
+{
+  "name": "server-watcher",
+  "version": "0.1.0",
+  "type": "module",
+  "author": "Melty1000",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Melty1000/server-watcher.git"
+  },
+  "scripts": {
+    "dev": "tauri dev",
+    "dev:tauri": "tauri dev",
+    "dev:web": "vite --host 127.0.0.1",
+    "build:web": "vite build",
+    "build": "tsc --noEmit && vite build",
+    "dist": "npm run dist:tauri",
+    "dist:tauri": "npm run check && tauri build",
+    "check": "tsc --noEmit",
+    "test:compile": "tsc -p tsconfig.test.json",
+    "test": "npm run test:compile && node --test dist-test/tests/*.test.js"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.11.0",
+    "@tauri-apps/plugin-clipboard-manager": "^2.3.2",
+    "@tauri-apps/plugin-notification": "^2.3.3",
+    "@tauri-apps/plugin-opener": "^2.5.4",
+    "lucide-react": "^1.14.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.0.0"
+  }
+}
