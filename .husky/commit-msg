@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+set -eu
+
+commit_msg_file="${1:-}"
+if [ -z "$commit_msg_file" ] || [ ! -f "$commit_msg_file" ]; then
+  echo "commit-msg hook could not read the commit message file." >&2
+  exit 1
+fi
+
+subject="$(sed -n '1p' "$commit_msg_file" || true)"
+subject_metadata="$(printf '%s\n' "$subject" | grep -Ei '\[AI:[[:space:]]*[^]|]+[[:space:]]*\|[[:space:]]*Machine:[[:space:]]*[^]]+\]' || true)"
+
+if [ -n "$subject_metadata" ]; then
+  exit 0
+fi
+
+echo "Commit message is missing AI model and machine metadata." >&2
+echo "Add model and machine context to the first commit line:" >&2
+echo "" >&2
+echo "  Commit subject [AI: GPT-5 Codex | Machine: desktop]" >&2
+exit 1

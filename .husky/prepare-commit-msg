@@ -1,0 +1,51 @@
+#!/usr/bin/env sh
+set -eu
+
+commit_msg_file="${1:-}"
+if [ -z "$commit_msg_file" ] || [ ! -f "$commit_msg_file" ]; then
+  exit 0
+fi
+
+configured_model="$(git config --get melty.codexModel 2>/dev/null || true)"
+configured_ai_model="$(git config --get melty.aiModel 2>/dev/null || true)"
+configured_machine="$(git config --get melty.commitMachine 2>/dev/null || true)"
+
+detect_machine() {
+  raw_machine="${AI_COMMIT_MACHINE:-${CODEX_MACHINE:-${configured_machine}}}"
+  if [ -z "$raw_machine" ]; then
+    raw_machine="${COMPUTERNAME:-$(hostname 2>/dev/null || true)}"
+  fi
+  printf '%s' "$raw_machine" | tr '[:upper:]' '[:lower:]'
+}
+
+model="${AI_MODEL:-${CLAUDE_MODEL:-${ANTHROPIC_MODEL:-${OPENAI_MODEL:-${CODEX_MODEL:-${configured_ai_model:-$configured_model}}}}}}"
+machine="$(detect_machine)"
+
+if [ -z "$model" ]; then
+  model="unknown-ai-model"
+fi
+
+if [ -z "$machine" ]; then
+  machine="unknown-machine"
+fi
+
+subject="$(sed -n '1p' "$commit_msg_file" || true)"
+subject_metadata="$(printf '%s\n' "$subject" | grep -Ei '\[AI:[[:space:]]*[^]|]+[[:space:]]*\|[[:space:]]*Machine:[[:space:]]*[^]]+\]' || true)"
+
+if [ -n "$subject_metadata" ]; then
+  exit 0
+fi
+
+tmp_file="${commit_msg_file}.melty-tmp"
+awk -v model="$model" -v machine="$machine" '
+  NR == 1 {
+    if ($0 ~ /^[[:space:]]*$/) {
+      print "Commit [AI: " model " | Machine: " machine "]"
+    } else {
+      print $0 " [AI: " model " | Machine: " machine "]"
+    }
+    next
+  }
+  { print }
+' "$commit_msg_file" > "$tmp_file"
+mv "$tmp_file" "$commit_msg_file"
